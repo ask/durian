@@ -7,7 +7,38 @@ celeryhooks - Webhooks using Celery
 Introduction
 ============
 
-.. Please write an introduction to your package here.
+
+    >>> from celeryhooks.hooks import Hook, Listener
+
+    >>> myhook = Hook(name="my-simple-hook", retry=True, async=True)
+
+    >>> def predicate_username_matches(sender, **kwargs):
+    ...     if sender.username == "ask":
+    ...         return True
+
+    >>> def install_listener():
+    ...     Listener.objects.create(url="http://where/ask/listens",
+    ...                             predicate=predicate_username_matches,
+    ...                             hook=myhook.name)
+    ...
+
+    >>> if __name__ = "__main__":
+    ...     install_listener()
+    ...     from django.contrib.auth.models import User
+    ...     ask = User.objects.get(username="ask")
+    ...     myhook.send(ask, what="changed")
+
+
+view:
+
+    >>> from django.http import HttpResponse
+    >>> from anyjson import deserialize
+
+    >>> def listens(request):
+    ...     payload = deserialize(request.raw_post_data)
+    ...     print(payload["what"])
+    ...     return HttpResponse("thanks!")
+
 
 Installation
 ============
