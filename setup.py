@@ -66,7 +66,7 @@ for dirpath, dirnames, filenames in os.walk(src_dir):
                 filenames]])
 
 setup(
-    name='celeryhooks',
+    name='celery-hooks',
     version=celeryhooks.__version__,
     description=celeryhooks.__doc__,
     author=celeryhooks.__author__,
