@@ -15,6 +15,7 @@ class Listener(models.Model):
     predicate = PickledObjectField(default=pickle.dumps(everything))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    config = PickledObjectField(_("configuration"), default=pickle.dumps({}),
+                                help_text=_("Hook specific configuration."))
     def match(self, sender, **arguments):
         return bool(self.predicate(sender, **arguments))
