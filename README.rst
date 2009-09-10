@@ -1,5 +1,5 @@
 ============================================================================
-celery-hooks - Webhooks using Celery
+durian - Webhooks for Django
 ============================================================================
 
 :Version: 0.0.1
@@ -7,29 +7,38 @@ celery-hooks - Webhooks using Celery
 Introduction
 ============
 
+**NOTE** This software is just in the planning stage and is going to
+change drastically. You can follow what is happening here, and is welcome to
+help out making it happen, but you should probably not use it for anything
+until it has reached an alpha version.
 
-    >>> from celeryhooks.hooks import Hook, Listener
+    >>> from django.db import signals
+    >>> from django.contrib.auth.models import User
+    >>> from durian.hook import ModelHook
 
-    >>> myhook = Hook(name="my-simple-hook", retry=True, async=True)
+    >>> userhook = ModelHook(name="user-post-save",
+    ...                      model=User,
+    ...                      signal=signals.post_save,
+    ...                      provides_args=["username", "is_admin"])
 
-    >>> def predicate_username_matches(sender, **kwargs):
-    ...     if sender.username == "ask":
-    ...         return True
+    >>> # send event when Joe is changed
+    >>> userhook.listener(
+    ...     url="http://where.joe/is/listening").match(
+    ...     username="joe").save()
 
-    >>> def install_listener():
-    ...     Listener.objects.create(url="http://where/ask/listens",
-    ...                             predicate=predicate_username_matches,
-    ...                             hook=myhook.name)
-    ...
+    >>> # send event when any user is changed.
+    >>> userhook.listener(url="http://where.joe/is/listening").save()
 
-    >>> if __name__ = "__main__":
-    ...     install_listener()
-    ...     from django.contrib.auth.models import User
-    ...     ask = User.objects.get(username="ask")
-    ...     myhook.send(ask, what="changed")
+    >>> # Send event when Joe is admin
+    >>> userhook.listener(
+    ...     url="http://where.joe/is/listening").match(
+    ...         username="joe", is_admin=True).save()
 
+    >>> joe = User.objects.get(username="joe")
+    >>> joe.is_admin = True
+    >>> joe.save()
 
-view:
+View for listening URL:
 
     >>> from django.http import HttpResponse
     >>> from anyjson import deserialize
@@ -43,17 +52,17 @@ view:
 Installation
 ============
 
-You can install ``celeryhooks`` either via the Python Package Index (PyPI)
+You can install ``durian`` either via the Python Package Index (PyPI)
 or from source.
 
 To install using ``pip``,::
 
-    $ pip install celeryhooks
+    $ pip install durian
 
 
 To install using ``easy_install``,::
 
-    $ easy_install celeryhooks
+    $ easy_install durian
 
 
 If you have downloaded a source tarball you can install it

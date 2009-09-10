@@ -1,12 +1,13 @@
-celeryhooks Documentation
+Durian Documentation
 ==================================
 
 Contents:
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
 
     introduction
+    reference/index
     changelog
 
 

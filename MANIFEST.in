@@ -5,5 +5,5 @@ include MANIFEST.in
 include README
 include TODO
 recursive-include docs *
-recursive-include celeryhooks *
-recursive-include tests *
+recursive-include durian *
+recursive-include testproj *

@@ -5,7 +5,7 @@ from anyjson import serialize
 
 
 class WebhookSignal(Task):
-    name = "celeryhooks.tasks.WebhookSignal"
+    name = "durian.tasks.WebhookSignal"
     ignore_result = True
 
     def run(self, url, payload, **kwargs):

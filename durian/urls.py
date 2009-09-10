@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, url, include
-from celeryhooks import views
+from durian import views
 
 
 urlpatterns = patterns("",

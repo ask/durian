@@ -1,17 +1,17 @@
 Installation
 ============
 
-You can install ``celeryhooks`` either via the Python Package Index (PyPI)
+You can install ``durian`` either via the Python Package Index (PyPI)
 or from source.
 
 To install using ``pip``,::
 
-    $ pip install celeryhooks
+    $ pip install durian
 
 
 To install using ``easy_install``,::
 
-    $ easy_install celeryhooks
+    $ easy_install durian
 
 
 If you have downloaded a source tarball you can install it
