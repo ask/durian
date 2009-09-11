@@ -17,3 +17,4 @@ devdatabase.db
 bundle_version.gen
 celeryd.log
 celeryd.pid
+docs/.build
