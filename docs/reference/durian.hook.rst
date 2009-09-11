@@ -1,8 +1,8 @@
 ====================================
- Defining Hooks - durian.hooks
+ Defining Hooks - durian.hook
 ====================================
 
-.. currentmodule:: durian.hooks
+.. currentmodule:: durian.hook
 
-.. automodule:: durian.hooks
+.. automodule:: durian.hook
     :members:
