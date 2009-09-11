@@ -1,7 +1,7 @@
 from durian.models import Listener
 from celery.utils import get_full_cls_name
 from durian.tasks import WebhookSignal
-from durian.forms import HookConfigForm
+from durian.forms import HookConfigForm, gen_match_form
 from functools import partial as curry
 
 
@@ -29,8 +29,9 @@ class Hook(object):
         self.fail_silently = fail_silently or self.fail_silently
         self.provides_args = provides_args or self.provides_args
         self.config_form = config_form or self.config_form
+        form_name = "%sConfigForm" % self.name
         self.match_form = match_form or self.match_form or \
-                            gen_match_form(self.provides_args)
+                            gen_match_form(form_name, self.provides_args)
 
     def send(self, sender, **payload):
         payload = prepare_payload(sender, payload)
@@ -132,4 +133,3 @@ class IntermediateListener(object):
 
     def save(self):
         return self.hook.add_listener_by_form(self.form, self.match)
-

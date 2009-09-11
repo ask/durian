@@ -1,7 +1,8 @@
 from durian.models import Listener
-from durian.hooks import Hook
 from django import forms
 from durian.forms import HookConfigForm
+from durian.hook import Hook
+from durian.registry import hooks
 
 
             
@@ -9,6 +10,7 @@ from durian.forms import HookConfigForm
 
 class MyHook(Hook):
     name = "myhook"
+hooks.register(MyHook())
 
 
 
@@ -35,6 +37,7 @@ class TwitterCommitHook(Hook):
     name = "myuserhook"
     config_form = TwitterCommitHookConfigForm
     providing_args = ["username", "password", "digest", "active"]
+hooks.register(TwitterCommitHook)
 
 
 

@@ -8,7 +8,7 @@
 .. toctree::
     :maxdepth: 2
 
-    durian.hooks
+    durian.hook
     durian.tasks
     durian.views
     durian.forms
