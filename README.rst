@@ -12,42 +12,110 @@ change drastically. You can follow what is happening here, and is welcome to
 help out making it happen, but you should probably not use it for anything
 until it has reached an alpha version.
 
-    >>> from django.db import signals
-    >>> from django.contrib.auth.models import User
+
+Creating an event
+-----------------
+
+In this example we'll be creating a ModelHook.
+
+A ModelHook is a hook which takes a Django model and signal.
+So whenever that signal is fired, the hook is also triggered.
+
+You can specify which of the model fields you want to pass on to the listeners
+with the ``provides_args`` attribute.
+
+
+First let's create a simple model of a person storing the persons
+name, address and a secret field we don't want to pass on to listeners:
+
+    >>> from django.db import models
+    >>> from django.db.models import signals
+    >>> from django.utils.translation import ugettext_lazy as _
+
+    >>> class Person(models.Model):
+    ...     name = models.CharField(_(u"name"), blank=False, max_length=200)
+    ...     address = models.CharField(_(u"address"), max_length=200)
+    ...     secret = models.CharField(_(u"secret"), max_length=200)
+
+
+Now to the hook itself. We subclass the ModelHook class and register it in
+the global webhook registry. For now we'll set ``async`` to False, this means
+the tasks won't be sent to ``celeryd`` but executed locally instead. In
+production you would certainly want the dispatch to be asynchronous.
+    
     >>> from durian.hook import ModelHook
     >>> from durian.registry import hooks
 
-    >>> userhook = ModelHook(name="user-post-save",
-    ...                      model=User,
-    ...                      signal=signals.post_save,
-    ...                      provides_args=["username", "is_admin"])
-    >>> hooks.register(userhook)
+    
+    >>> class PersonHook(ModelHook):
+    ...     name = "person"
+    ...     model = Person
+    ...     signal = signals.post_save
+    ...     provides_args = ["name", "address"]
+    ...     async = False
+    >>> hooks.register(PersonHook)
 
-    >>> # send event when Joe is changed
-    >>> userhook.listener(
+Now we can create ourselves some listeners. They can be created manually
+or in your web-interface directly. A listener must have a URL, which is the
+destination callback the signal is sent to, and you can optionally filter
+events so you only get the events you care about.
+
+    >>> # send event when person with name Joe is changed/added.
+    >>> PersonHook().listener(
     ...     url="http://where.joe/is/listening").match(
-    ...     username="joe").save()
+    ...     name="Joe").save()
 
-    >>> # send event when any user is changed.
-    >>> userhook.listener(url="http://where.joe/is/listening").save()
-
-    >>> # Send event when Joe is admin
-    >>> userhook.listener(
+    >>> # send event whenever a person with a name that starts with the
+    >>> # letter "J" is changed/added:
+    >>> from durian.match import Startswith
+    >>> PersonHook().listener(
     ...     url="http://where.joe/is/listening").match(
-    ...         username="joe", is_admin=True).save()
+    ...     name=Startswith("J").save()
 
-    >>> joe = User.objects.get(username="joe")
-    >>> joe.is_admin = True
-    >>> joe.save()
+    >>> # send event when any Person is changed/added.
+    >>> PersonHook().listener(url="http://where.joe/is/listening").save()
 
-View for listening URL:
+The filters can use special matching classes, these are:
+
+    * Any()
+        Matches anything. Even if the field is not sent at all.   
+
+    * Is(pattern)
+        Strict equality. The values must match precisely.
+
+    * Startswith(pattern)
+        Matches if the string starts with the given pattern.
+
+    * Endswith(pattern)
+        Matches if the string ends with the given pattern
+
+    * Contains(pattern)
+        Matches if the string contains the given pattern.
+
+    * Like(regex)
+        Match by a regular expression.
+
+
+In this screenshot you can see the view for selecting the person event:
+
+.. image:: 
+    http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png
+
+and then creating a listener for that event:
+
+.. image::
+    http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png
+
+
+View for listening URL
+----------------------
 
     >>> from django.http import HttpResponse
     >>> from anyjson import deserialize
 
     >>> def listens(request):
     ...     payload = deserialize(request.raw_post_data)
-    ...     print(payload["what"])
+    ...     print(payload["name"])
     ...     return HttpResponse("thanks!")
 
 
