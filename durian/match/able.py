@@ -33,6 +33,10 @@ class Matchable(object):
 class Any(Matchable):
     """Matchable always matching anything."""
 
+    def __init__(self, value):
+        value = value or ""
+        super(Any, self).__init__(value)
+
     def __eq__(self, other):
         return True
 
