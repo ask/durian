@@ -77,7 +77,6 @@ class TestHook(unittest.TestCase):
         }))
 
     def test_trigger_event(self):
-        print("FOOOOOBAR")
         url = "http://where.joe/listens"
         form = testhook.config_form({"url": url})
         listener = testhook.listener(form).match(name="Joe").save()

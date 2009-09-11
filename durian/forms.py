@@ -29,7 +29,7 @@ class BaseMatchForm(forms.Form):
         return self.to_mtuplelist()
 
 
-def gen_match_form(name, provides_args):
+def create_match_form(name, provides_args):
 
     def gen_field_for_name(name):
         return {name: forms.CharField(required=True, initial=name),

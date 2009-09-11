@@ -1,7 +1,7 @@
 from durian.models import Listener
 from celery.utils import get_full_cls_name, gen_unique_id
 from durian.tasks import WebhookSignal
-from durian.forms import HookConfigForm, gen_match_form
+from durian.forms import HookConfigForm, create_match_form
 from durian.match.strategy import deepmatch
 from functools import partial as curry
 
@@ -37,7 +37,7 @@ class Hook(object):
         self.config_form = config_form or self.config_form
         form_name = "%sConfigForm" % self.name
         self.match_form = match_form or self.match_form or \
-                            gen_match_form(form_name, self.provides_args)
+                            create_match_form(form_name, self.provides_args)
 
     def send(self, sender, **payload):
         payload = self.prepare_payload(sender, payload)
