@@ -1,0 +1,15 @@
+{% load i18n %}
+<h3>{% trans "Create" %} {{ hook_name|title }} {% trans "Listener" %}</h3>
+<form id="durian-create-hook" method="post" action="{% url durian:create %}">
+    <input type="hidden" name="type" value="{{ hook_type }}" />
+    <h4>{% trans "Listener configuration" %}</h4>
+    {{ config_form.as_p }}
+
+    <h4>{% trans "Filter events" %}</h4>
+    {% for match_form in match_forms %}
+        <p><div id="durian-create-hook-condition">
+            {{ match_form }}
+        </div></p>
+    {% endfor %}
+    <input type="submit" value="Create" />
+</form>
