@@ -35,7 +35,7 @@ and your clients saves bandwidth, sometimes by a lot.
 
 You can read more about web hooks at the `Web Hooks Blog`_.
 These slides by Jeff Lindsay is a good introduction to the subject:
-    `Using Web Hooks`_.
+`Using Web Hooks`_.
 
 .. _`Web Hooks Blog`: http://blog.webhooks.org
 .. _`Using Web Hooks`:
