@@ -53,8 +53,220 @@
   <div class="section" id="module-durian.hook">
 <h1>Defining Hooks - durian.hook<a class="headerlink" href="#module-durian.hook" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
+<dt id="durian.hook.Hook">
+<em class="property">class </em><tt class="descclassname">durian.hook.</tt><tt class="descname">Hook</tt><big>(</big><em>name=None</em>, <em>task_cls=None</em>, <em>timeout=None</em>, <em>async=None</em>, <em>retry=None</em>, <em>max_retries=None</em>, <em>fail_silently=False</em>, <em>config_form=None</em>, <em>provides_args=None</em>, <em>match_forms=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#durian.hook.Hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Web Hook Event.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>name</em> &#8211; See <a title="durian.hook.Hook.name" class="reference internal" href="#durian.hook.Hook.name"><tt class="xref docutils literal"><span class="pre">name</span></tt></a>.</li>
+<li><em>provides_args</em> &#8211; See <a title="durian.hook.Hook.provides_args" class="reference internal" href="#durian.hook.Hook.provides_args"><tt class="xref docutils literal"><span class="pre">provides_args</span></tt></a>.</li>
+<li><em>config_form</em> &#8211; See <a title="durian.hook.Hook.config_form" class="reference internal" href="#durian.hook.Hook.config_form"><tt class="xref docutils literal"><span class="pre">config_form</span></tt></a>.</li>
+<li><em>timeout</em> &#8211; See <a title="durian.hook.Hook.timeout" class="reference internal" href="#durian.hook.Hook.timeout"><tt class="xref docutils literal"><span class="pre">timeout</span></tt></a>.</li>
+<li><em>async</em> &#8211; See <a title="durian.hook.Hook.async" class="reference internal" href="#durian.hook.Hook.async"><tt class="xref docutils literal"><span class="pre">async</span></tt></a>.</li>
+<li><em>retry</em> &#8211; See <a title="durian.hook.Hook.retry" class="reference internal" href="#durian.hook.Hook.retry"><tt class="xref docutils literal"><span class="pre">retry</span></tt></a>.</li>
+<li><em>max_retries</em> &#8211; See <a title="durian.hook.Hook.max_retries" class="reference internal" href="#durian.hook.Hook.max_retries"><tt class="xref docutils literal"><span class="pre">max_retries</span></tt></a>.</li>
+<li><em>fail_silently</em> &#8211; See <a title="durian.hook.Hook.fail_silently" class="reference internal" href="#durian.hook.Hook.fail_silently"><tt class="xref docutils literal"><span class="pre">fail_silently</span></tt></a>.</li>
+<li><em>task_cls</em> &#8211; See <a title="durian.hook.Hook.task_cls" class="reference internal" href="#durian.hook.Hook.task_cls"><tt class="xref docutils literal"><span class="pre">task_cls</span></tt></a>.</li>
+<li><em>match_forms</em> &#8211; See <a title="durian.hook.Hook.match_forms" class="reference internal" href="#durian.hook.Hook.match_forms"><tt class="xref docutils literal"><span class="pre">match_forms</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="durian.hook.Hook.name">
+<tt class="descname">name</tt><a class="headerlink" href="#durian.hook.Hook.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the hook.</p>
+<p>If not provided this will be automatically generated using the class
+module and name, if you want to use this feature you can&#8217;t use
+relative imports.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.provides_args">
+<tt class="descname">provides_args</tt><a class="headerlink" href="#durian.hook.Hook.provides_args" title="Permalink to this definition">¶</a></dt>
+<dd>The list of arguments the event provides. This is the standard
+list of arguments you are going to pass on to <a title="durian.hook.Hook.send" class="reference internal" href="#durian.hook.Hook.send"><tt class="xref docutils literal"><span class="pre">send()</span></tt></a>, used to
+generate the filter events form (<a title="durian.hook.Hook.match_forms" class="reference internal" href="#durian.hook.Hook.match_forms"><tt class="xref docutils literal"><span class="pre">match_forms</span></tt></a>).</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.config_form">
+<tt class="descname">config_form</tt><a class="headerlink" href="#durian.hook.Hook.config_form" title="Permalink to this definition">¶</a></dt>
+<dd>A Django form to save configuration for listeners attaching to this
+form. The default form is <tt class="xref docutils literal"><span class="pre">durian.forms.HookConfigForm</span></tt>, which
+has the URL field.</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.timeout">
+<tt class="descname">timeout</tt><a class="headerlink" href="#durian.hook.Hook.timeout" title="Permalink to this definition">¶</a></dt>
+<dd>The timeout in seconds before we give up trying to dispatch the
+event to a listener URL.</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.async">
+<tt class="descname">async</tt><a class="headerlink" href="#durian.hook.Hook.async" title="Permalink to this definition">¶</a></dt>
+<dd>If <tt class="xref docutils literal"><span class="pre">True</span></tt>, signals are dispatched to celery workers via a mesage.
+Otherwise dispatch happens locally (not a good idea in production).</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.retry">
+<tt class="descname">retry</tt><a class="headerlink" href="#durian.hook.Hook.retry" title="Permalink to this definition">¶</a></dt>
+<dd>Retry the task if it fails.</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.max_retries">
+<tt class="descname">max_retries</tt><a class="headerlink" href="#durian.hook.Hook.max_retries" title="Permalink to this definition">¶</a></dt>
+<dd>Maximum number of retries before we give up.</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.fail_silently">
+<tt class="descname">fail_silently</tt><a class="headerlink" href="#durian.hook.Hook.fail_silently" title="Permalink to this definition">¶</a></dt>
+<dd>Fail silently if the dispatch gives an HTTP error.</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.task_cls">
+<tt class="descname">task_cls</tt><a class="headerlink" href="#durian.hook.Hook.task_cls" title="Permalink to this definition">¶</a></dt>
+<dd>The <tt class="xref docutils literal"><span class="pre">celery.task.base.Task</span></tt> class to use for dispatching
+the event.</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.match_forms">
+<tt class="descname">match_forms</tt><a class="headerlink" href="#durian.hook.Hook.match_forms" title="Permalink to this definition">¶</a></dt>
+<dd>A list of forms to create an event filter. This is automatically
+generated based on the <a title="durian.hook.Hook.provides_args" class="reference internal" href="#durian.hook.Hook.provides_args"><tt class="xref docutils literal"><span class="pre">provides_args</span></tt></a> attribute.</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.add_listener">
+<tt class="descname">add_listener</tt><big>(</big><em>url</em>, <em>match={}</em>, <em>**config</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.add_listener" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add listener for this signal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>url</em> &#8211; The url the listener is listening on.</li>
+<li><em>match</em> &#8211; The even filter match dict.</li>
+<li><em>**config</em> &#8211; Hook specific listener configuration.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.add_listener_by_form">
+<tt class="descname">add_listener_by_form</tt><big>(</big><em>form</em>, <em>match=None</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.add_listener_by_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add listener with an instantiated <a title="durian.hook.Hook.config_form" class="reference internal" href="#durian.hook.Hook.config_form"><tt class="xref docutils literal"><span class="pre">config_form</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>form</em> &#8211; An instance of <a title="durian.hook.Hook.config_form" class="reference internal" href="#durian.hook.Hook.config_form"><tt class="xref docutils literal"><span class="pre">config_form</span></tt></a>.</li>
+<li><em>match</em> &#8211; Optional event filter match dict.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.apply_match_forms">
+<tt class="descname">apply_match_forms</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.apply_match_forms" title="Permalink to this definition">¶</a></dt>
+<dd>With data recieved by request, convert to a list of match
+tuples.</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.event_filter">
+<tt class="descname">event_filter</tt><big>(</big><em>sender</em>, <em>payload</em>, <em>match</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.event_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>How we filter events.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>sender</em> &#8211; The sender of the signal.</li>
+<li><em>payload</em> &#8211; The signal data.</li>
+<li><em>match</em> &#8211; The match dictionary, or <tt class="xref docutils literal"><span class="pre">None</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.get_applier">
+<tt class="descname">get_applier</tt><big>(</big><em>async=None</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.get_applier" title="Permalink to this definition">¶</a></dt>
+<dd>Get the current apply method. Asynchronous or synchronous.</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.get_listeners">
+<tt class="descname">get_listeners</tt><big>(</big><em>sender</em>, <em>payload</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.get_listeners" title="Permalink to this definition">¶</a></dt>
+<dd>Get a list of all the listeners who wants this signal.</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.get_match_forms">
+<tt class="descname">get_match_forms</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.get_match_forms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the match forms with data recived by a request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">A list of instantiated match forms.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.listener">
+<tt class="descname">listener</tt><big>(</big><em>form</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.listener" title="Permalink to this definition">¶</a></dt>
+<dd>Create a new listener.</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.prepare_payload">
+<tt class="descname">prepare_payload</tt><big>(</big><em>sender</em>, <em>payload</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.prepare_payload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the payload for dispatching.</p>
+<p>You can add any additional formatting of the payload here.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="durian.hook.Hook.send">
+<tt class="descname">send</tt><big>(</big><em>sender</em>, <em>**payload</em><big>)</big><a class="headerlink" href="#durian.hook.Hook.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send signal and dispatch to all listeners.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>sender</em> &#8211; The sender of the signal. Either a specific object
+or <tt class="xref docutils literal"><span class="pre">None</span></tt>.</li>
+<li><em>payload</em> &#8211; The data to pass on to listeners. Usually the keys
+described in <a title="durian.hook.Hook.provides_args" class="reference internal" href="#durian.hook.Hook.provides_args"><tt class="xref docutils literal"><span class="pre">provides_args</span></tt></a> and any additional keys you&#8217;d
+want to provide.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="durian.hook.Hook.task_keywords">
+<tt class="descname">task_keywords</tt><a class="headerlink" href="#durian.hook.Hook.task_keywords" title="Permalink to this definition">¶</a></dt>
+<dd>The keyword arguments sent to the celery task.</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="durian.hook.ModelHook">
-<em class="property">class </em><tt class="descclassname">durian.hook.</tt><tt class="descname">ModelHook</tt><big>(</big><em>model=None</em>, <em>signal=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#durian.hook.ModelHook" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">durian.hook.</tt><tt class="descname">ModelHook</tt><big>(</big><em>model=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#durian.hook.ModelHook" title="Permalink to this definition">¶</a></dt>
 <dd><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">signals</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
 </pre></div>
@@ -68,6 +280,11 @@
 </pre></div>
 </div>
 </dd></dl>
+
+<dl class="class">
+<dt id="durian.hook.SignalHook">
+<em class="property">class </em><tt class="descclassname">durian.hook.</tt><tt class="descname">SignalHook</tt><big>(</big><em>signal=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#durian.hook.SignalHook" title="Permalink to this definition">¶</a></dt>
+<dd>Hook attached to a Django signal.</dd></dl>
 
 </div>
 
