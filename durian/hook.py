@@ -1,8 +1,9 @@
 from durian.models import Listener
 from celery.utils import get_full_cls_name, gen_unique_id
 from durian.tasks import WebhookSignal
-from durian.forms import HookConfigForm, create_match_form
+from durian.forms import HookConfigForm, create_match_forms
 from durian.match.strategy import deepmatch
+from durian.match import mtuplelist_to_matchdict
 from functools import partial as curry
 
 
@@ -16,11 +17,11 @@ class Hook(object):
     fail_silently = False
     config_form = HookConfigForm
     provides_args = []
-    match_form = None
+    match_forms = None
 
     def __init__(self, name=None, task_cls=None, timeout=None,
             async=None, retry=None, max_retries=None, fail_silently=False,
-            config_form=None, provides_args=None, match_form=None, **kwargs):
+            config_form=None, provides_args=None, match_forms=None, **kwargs):
         self.name = name or self.name or get_full_cls_name(self.__class__)
         self.task_cls = task_cls or self.task_cls
         if timeout is not None:
@@ -36,8 +37,8 @@ class Hook(object):
         self.provides_args = provides_args or self.provides_args
         self.config_form = config_form or self.config_form
         form_name = "%sConfigForm" % self.name
-        self.match_form = match_form or self.match_form or \
-                            create_match_form(form_name, self.provides_args)
+        self.match_forms = match_forms or self.match_forms or \
+                            create_match_forms(form_name, self.provides_args)
 
     def send(self, sender, **payload):
         payload = self.prepare_payload(sender, payload)
@@ -52,6 +53,15 @@ class Hook(object):
         if not match:
             return True
         return deepmatch(match, payload)
+
+    def get_match_forms(self, **kwargs):
+        return [match_form(**kwargs)
+                    for match_form in self.match_forms.values()]
+
+    def apply_match_forms(self, data):
+        mtuplelist = [match_form(data).field_to_mtuple()
+                         for match_form in self.match_forms.values()]
+        return mtuplelist_to_matchdict(mtuplelist)
 
     def get_listeners(self, sender, payload):
         possible_targets = Listener.objects.filter(hook=self.name)
@@ -110,8 +120,8 @@ class ModelHook(Hook):
     def __init__(self, model=None, signal=None, **kwargs):
         self.model = model or self.model
         self.signal = signal or self.signal
-        if not model:
-            raise NotImplementedError("ModelHooks requires a model.")
+        if not self.model:
+            raise NotImplementedError("ModelHook requires a model.")
         if self.signal:
             self.connect()
         if not self.provides_args:

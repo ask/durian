@@ -11,8 +11,10 @@ class TestMtuplelist(unittest.TestCase):
         mtuplelist = [("name", match.CONDITION_ENDSWITH, "Constanza"),
                       ("zipcode", match.CONDITION_STARTSWITH, "70"),
                       ("address", match.CONDITION_EXACT, "Milkyway"),
-                      ("work", match.CONDITION_CONTAINS, "andeley")]
+                      ("work", match.CONDITION_CONTAINS, "andeley"),
+                      ("zoo", match.CONDITION_PASS, "zoo")]
         matchdict = mtuplelist_to_matchdict(mtuplelist)
+        self.assertFalse(matchdict.get("zoo"))
         self.assertTrue(isinstance(matchdict.get("name"), Endswith))
         self.assertEquals(matchdict["name"].value, "Constanza")
         self.assertTrue(isinstance(matchdict.get("zipcode"), Startswith))

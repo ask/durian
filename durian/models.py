@@ -15,3 +15,11 @@ class Listener(models.Model):
                                 help_text=_("Hook specific configuration."))
     match = PickledObjectField(_(u"conditions"), default=pickle.dumps({}),
                                 help_text=_("Hook specific event filter"))
+
+    class Meta:
+        verbose_name = _("listener")
+        verbose_name_plural = _("listeners")
+    
+    def __unicode__(self):
+        return "%s match:%s config:%s" % (
+                self.url, self.match, self.config)

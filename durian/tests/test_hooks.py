@@ -41,29 +41,25 @@ class TestHook(unittest.TestCase):
         self.assertTrue(in_reg)
         self.assertTrue(isinstance(in_reg, Hook))
 
-    def test_match_form(self):
-        mform = testhook.match_form()
-        self.assertTrue(isinstance(mform, BaseMatchForm))
+    def test_match_forms(self):
+        mforms = testhook.match_forms
         for field in testhook.provides_args:
-            self.assertTrue(field in mform.base_fields)
+            self.assertTrue(field in mforms)
+            mform = mforms[field]()
+            self.assertTrue(isinstance(mform, BaseMatchForm))
             self.assertTrue("%s_cond" % field in mform.base_fields)
             self.assertTrue("%s_query" % field in mform.base_fields)
-        mform = testhook.match_form({
-                    "name": "name",
+
+        matchdict = testhook.apply_match_forms({
                     "name_cond": match.CONDITION_EXACT,
                     "name_query": "George Constanza",
-                    "address": "address",
                     "address_cond": match.CONDITION_ENDSWITH,
                     "address_query": "New York City",
-                    "phone": "phone",
                     "phone_cond": match.CONDITION_STARTSWITH,
                     "phone_query": "212",
-                    "email": "email",
                     "email_cond": match.CONDITION_CONTAINS,
                     "email_query": "@vandelay"})
-        self.assertTrue(mform.is_valid())
 
-        matchdict = match.mtuplelist_to_matchdict(mform.save())
         self.assertTrue(isinstance(matchdict.get("name"), match.Is))
         self.assertTrue(isinstance(matchdict.get("address"), match.Endswith))
         self.assertTrue(isinstance(matchdict.get("phone"), match.Startswith))

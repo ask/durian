@@ -30,6 +30,13 @@ class Matchable(object):
         return '%s("%s")' % (self.__class__.__name__, self.value)
 
 
+class Any(Matchable):
+    """Matchable always matching anything."""
+
+    def __eq__(self, other):
+        return True
+
+
 class Is(Matchable):
     """Matchable checking for strict equality.
 

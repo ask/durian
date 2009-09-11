@@ -56,6 +56,15 @@ class HookRegistry(UserDict):
         """Get hook by name."""
         return self.data[name]
 
+    def as_choices(self):
+        """Return the hook registry as a choices tuple for use
+        within Django models and forms."""
+        dict_types = dict((type.name, type)
+                        for type in self.data.values())
+        sorted_names = sorted(dict_types.keys())
+        return [(type.name, name.capitalize())
+                    for name, type in dict_types.items()]
+
 """
 .. data:: hooks
 

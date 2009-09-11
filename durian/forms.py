@@ -1,43 +1,62 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from durian.match import mtuplelist_to_matchdict, MATCHABLE_CHOICES
+from durian.registry import hooks
 
 
 class HookConfigForm(forms.Form):
-    url = forms.URLField(_(u"destination URL"), required=True)
+    url = forms.URLField(label=_(u"Listener URL"), required=True)
 
     def save(self):
         return dict(self.cleaned_data)
 
 
 class BaseMatchForm(forms.Form):
-    _provides_args = []
+    _condition_for = None
 
     def __init__(self, *args, **kwargs):
-        self._provides_args = kwargs.pop("provides_args", self._provides_args)
+        self._condition_for = kwargs.pop("condition_for", self._condition_for)
         super(BaseMatchForm, self).__init__(*args, **kwargs)
 
-    def to_mtuplelist(self):
-        return map(self.field_to_mtuple, self._provides_args)
+    def field_to_mtuple(self):
+        if not hasattr(self, "cleaned_data"):
+            if not self.is_valid():
+                raise Exception("FORM IS NOT VALID: %s" % self.errors)
 
-    def field_to_mtuple(self, field):
+        field = self._condition_for
         return (field,
                 self.cleaned_data["%s_cond" % field],
                 self.cleaned_data["%s_query" % field])
 
     def save(self):
-        return self.to_mtuplelist()
+        return self.field_to_mtuple()
 
 
-def create_match_form(name, provides_args):
+def create_select_hook_form(*args, **kwargs):
+    """Dynamically create a form that has a ``ChoiceField`` listing all the
+    hook types registered in the hook registry."""
+
+    class SelectHookForm(forms.Form):
+        type = forms.ChoiceField(choices=hooks.as_choices())
+
+    return SelectHookForm(*args, **kwargs)
+
+
+def create_match_forms(name, provides_args):
 
     def gen_field_for_name(name):
-        return {name: forms.CharField(required=True, initial=name),
-                "%s_cond" % name: forms.ChoiceField(choices=MATCHABLE_CHOICES,
-                                              widget=forms.Select(),
-                                              label=_("condition")),
-                "%s_query" % name: forms.CharField(required=True, initial="")}
-    dict_ = dict(_provides_args=provides_args)
-    [dict_.update(gen_field_for_name(name)) for name in provides_args]
+        return {"%s_cond" % name: forms.ChoiceField(label=name,
+                                              choices=MATCHABLE_CHOICES,
+                                              widget=forms.Select()),
+                "%s_query" % name: forms.CharField(label="",
+                                                   required=False,
+                                                   initial=""),
+        }
 
-    return type(name, (BaseMatchForm, ), dict_)
+    def gen_form_for_field(field):
+        dict_ = gen_field_for_name(field)
+        dict_["_condition_for"] = field
+        return type(name + field, (BaseMatchForm, ), dict_)
+
+    return dict((field, gen_form_for_field(field))
+                    for field in provides_args)
