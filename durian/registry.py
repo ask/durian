@@ -1,6 +1,7 @@
 """durian.registry"""
 from celery.exceptions import NotRegistered, AlreadyRegistered
 from UserDict import UserDict
+from inspect import isclass
 
 
 class HookRegistry(UserDict):
@@ -20,6 +21,9 @@ class HookRegistry(UserDict):
         :raises AlreadyRegistered: if the task is already registered.
 
         """
+        # instantiate class if not already.
+        hook = hook() if isclass(hook) else hook
+
         name = hook.name
         if name in self.data:
             raise self.AlreadyRegistered(
@@ -31,7 +35,7 @@ class HookRegistry(UserDict):
         """Unregister hook by name.
 
         :param name: name of the hook to unregister, or a
-            :class:`durian.hooks.Hook` class with a valid ``name`` attribute.
+            :class:`durian.hook.Hook` class with a valid ``name`` attribute.
 
         :raises celery.exceptions.NotRegistered: if the hook has not
             been registered.

@@ -40,5 +40,5 @@ def mtuplelist_to_matchdict(mtuplelist):
         {"name": Endswith("Constanza"), "zipcode": Startswith("70")}
 
     """
-    return dict((name, CONST_TO_MATCHABLE[kind](what) or what)
+    return dict((name, CONST_TO_MATCHABLE[int(kind)](what) or what)
                     for name, kind, what in mtuplelist)
