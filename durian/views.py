@@ -10,6 +10,7 @@ from durian.registry import hooks
 
 def select(request, template_name="durian/select_hook.html"):
     context = RequestContext(request)
+    context["title"] = _("Select event")
     context["select_hook_form"] = create_select_hook_form()
     return render_to_response(template_name, context_instance=context)
 
@@ -32,6 +33,8 @@ def create(request, template_name="durian/create_hook.html"):
         config_form = hook.config_form()
 
     match_forms = hook.get_match_forms()
+    context["title"] = " ".join([
+                _("Create"), hook.name.capitalize(), _("Listener")])
     context["hook_type"] = hook.name
     context["hook_name"] = hook.name
     context["match_forms"] = match_forms

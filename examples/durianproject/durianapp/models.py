@@ -15,6 +15,6 @@ class PersonHook(ModelHook):
     name = "person"
     model = Person
     signal = signals.post_save
-    provides_args = ["name", "address", "secret"]
+    provides_args = ["name", "address"]
     async = False
 hooks.register(PersonHook)
