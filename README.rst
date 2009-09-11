@@ -1,11 +1,47 @@
 ============================================================================
-durian - Webhooks for Django
+durian - Web Hooks for Django
 ============================================================================
 
 :Version: 0.0.1
 
+.. image:: http://cloud.github.com/downloads/ask/durian/webhooks-logo.png
+
 Introduction
 ============
+
+We want the web sites we create to communicate with other sites. To enable
+this we give the clients an URL they can connect to. This is fine for most
+requests, but let's take a look at RSS.
+
+RSS publishes your articles for others to subscribe to. Whenever you have a
+new article to publish you add it to the RSS document available at an URL
+like::
+
+    http://example.com/articles.rss
+
+The client connects to this URL, say, every 20 minutes to check if there's
+something new. And if there is something new, it has to re-download the entire
+content, even if it already has some of the articles from before.
+We call this communication method `pulling`_.
+
+This is where web hooks (or HTTP callbacks) comes in, instead of giving the
+clients an URL they can connect to, the clients *give you an URL* you connect
+to every time there is something to update.
+
+By `pushing`_ instead of pulling the updates, both you
+and your clients saves bandwidth, sometimes by a lot.
+
+.. image:: http://cloud.github.com/downloads/ask/durian/webhook-callback2.png
+
+You can read more about web hooks at the `Web Hooks Blog`_.
+These slides by Jeff Lindsay is a good introduction to the subject:
+    `Using Web Hooks`_.
+
+.. _`Web Hooks Blog`: http://blog.webhooks.org
+.. _`Using Web Hooks`:
+    http://www.slideshare.net/progrium/using-web-hooks
+.. _`pushing`: http://en.wikipedia.org/wiki/Push_technology
+.. _`pulling`: http://en.wikipedia.org/wiki/Pull_technology
 
 **NOTE** This software is just in the planning stage and is going to
 change drastically. You can follow what is happening here, and is welcome to
@@ -22,14 +58,13 @@ A ModelHook is a hook which takes a Django model and signal.
 So whenever that signal is fired, the hook is also triggered.
 
 You can specify which of the model fields you want to pass on to the listeners
-with the ``provides_args`` attribute.
+via the ``provides_args`` attribute.
 
 
 First let's create a simple model of a person storing the persons
 name, address and a secret field we don't want to pass on to listeners:
 
     >>> from django.db import models
-    >>> from django.db.models import signals
     >>> from django.utils.translation import ugettext_lazy as _
 
     >>> class Person(models.Model):
@@ -45,6 +80,7 @@ production you would certainly want the dispatch to be asynchronous.
     
     >>> from durian.hook import ModelHook
     >>> from durian.registry import hooks
+    >>> from django.db.models import signals
 
     
     >>> class PersonHook(ModelHook):
@@ -56,7 +92,7 @@ production you would certainly want the dispatch to be asynchronous.
     >>> hooks.register(PersonHook)
 
 Now we can create ourselves some listeners. They can be created manually
-or in your web-interface directly. A listener must have a URL, which is the
+or by using the web-interface. A listener must have a URL, which is the
 destination callback the signal is sent to, and you can optionally filter
 events so you only get the events you care about.
 
