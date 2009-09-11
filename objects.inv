@@ -1,0 +1,24 @@
+# Sphinx inventory version 1
+# Project: durian
+# Version: 0.0
+durian.forms mod reference/durian.forms.html
+durian.match.strategy mod reference/durian.match.strategy.html
+durian.match mod reference/durian.match.html
+durian.match.able mod reference/durian.match.able.html
+durian.tasks mod reference/durian.tasks.html
+durian.models mod reference/durian.models.html
+durian.hook mod reference/durian.hook.html
+durian.views mod reference/durian.views.html
+durian.match.able.Startswith class reference/durian.match.able.html
+durian.match.able.Matchable.value attribute reference/durian.match.able.html
+durian.match.strategy.deepmatch function reference/durian.match.strategy.html
+durian.match.able.Like class reference/durian.match.able.html
+durian.forms.create_select_hook_form function reference/durian.forms.html
+durian.hook.ModelHook class reference/durian.hook.html
+durian.match.able.Any class reference/durian.match.able.html
+durian.models.Listener class reference/durian.models.html
+durian.match.able.Endswith class reference/durian.match.able.html
+durian.match.able.Contains class reference/durian.match.able.html
+durian.match.able.Is class reference/durian.match.able.html
+durian.match.mtuplelist_to_matchdict function reference/durian.match.html
+durian.match.able.Matchable class reference/durian.match.able.html

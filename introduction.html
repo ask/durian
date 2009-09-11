@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>durian - Web Hooks for Django &mdash; durian v0.0.1 documentation</title>
+    <link rel="stylesheet" href="static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.0.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="durian v0.0.1 documentation" href="index.html" />
+    <link rel="next" title="Module API Reference" href="reference/index.html" />
+    <link rel="prev" title="Durian Documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="reference/index.html" title="Module API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Durian Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">durian v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="durian-web-hooks-for-django">
+<h1>durian - Web Hooks for Django<a class="headerlink" href="#durian-web-hooks-for-django" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">0.0.1</td>
+</tr>
+</tbody>
+</table>
+<img alt="http://cloud.github.com/downloads/ask/durian/webhooks-logo.png" src="http://cloud.github.com/downloads/ask/durian/webhooks-logo.png" />
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>We want the web sites we create to communicate with other sites. To enable
+this we give the clients an URL they can connect to. This is fine for most
+requests, but let&#8217;s take a look at RSS.</p>
+<p>RSS publishes your articles for others to subscribe to. Whenever you have a
+new article to publish you add it to the RSS document available at an URL
+like:</p>
+<div class="highlight-python"><pre>http://example.com/articles.rss</pre>
+</div>
+<p>The client connects to this URL, say, every 20 minutes to check if there&#8217;s
+something new. And if there is something new, it has to re-download the entire
+content, even if it already has some of the articles from before.
+We call this communication method <a class="reference external" href="http://en.wikipedia.org/wiki/Pull_technology">pulling</a>.</p>
+<p>This is where web hooks (or HTTP callbacks) comes in, instead of giving the
+clients an URL they can connect to, the clients <em>give you an URL</em> you connect
+to every time there is something to update.</p>
+<p>By <a class="reference external" href="http://en.wikipedia.org/wiki/Push_technology">pushing</a> instead of pulling the updates, both you
+and your clients saves bandwidth, sometimes by a lot.</p>
+<img alt="http://cloud.github.com/downloads/ask/durian/webhook-callback2.png" src="http://cloud.github.com/downloads/ask/durian/webhook-callback2.png" />
+<p>You can read more about web hooks at the <a class="reference external" href="http://blog.webhooks.org">Web Hooks Blog</a>.
+These slides by Jeff Lindsay is a good introduction to the subject:</p>
+<blockquote>
+<a class="reference external" href="http://www.slideshare.net/progrium/using-web-hooks">Using Web Hooks</a>.</blockquote>
+<p><strong>NOTE</strong> This software is just in the planning stage and is going to
+change drastically. You can follow what is happening here, and is welcome to
+help out making it happen, but you should probably not use it for anything
+until it has reached an alpha version.</p>
+<div class="section" id="creating-an-event">
+<h3>Creating an event<a class="headerlink" href="#creating-an-event" title="Permalink to this headline">¶</a></h3>
+<p>In this example we&#8217;ll be creating a ModelHook.</p>
+<p>A ModelHook is a hook which takes a Django model and signal.
+So whenever that signal is fired, the hook is also triggered.</p>
+<p>You can specify which of the model fields you want to pass on to the listeners
+via the <tt class="docutils literal"><span class="pre">provides_args</span></tt> attribute.</p>
+<p>First let&#8217;s create a simple model of a person storing the persons
+name, address and a secret field we don&#8217;t want to pass on to listeners:</p>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="kn">import</span> <span class="n">ugettext_lazy</span> <span class="k">as</span> <span class="n">_</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">u&quot;name&quot;</span><span class="p">),</span> <span class="n">blank</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mf">200</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">address</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">u&quot;address&quot;</span><span class="p">),</span> <span class="n">max_length</span><span class="o">=</span><span class="mf">200</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">secret</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">u&quot;secret&quot;</span><span class="p">),</span> <span class="n">max_length</span><span class="o">=</span><span class="mf">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</blockquote>
+<p>Now to the hook itself. We subclass the ModelHook class and register it in
+the global webhook registry. For now we&#8217;ll set <tt class="docutils literal"><span class="pre">async</span></tt> to False, this means
+the tasks won&#8217;t be sent to <tt class="docutils literal"><span class="pre">celeryd</span></tt> but executed locally instead. In
+production you would certainly want the dispatch to be asynchronous.</p>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">durian.hook</span> <span class="kn">import</span> <span class="n">ModelHook</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">durian.registry</span> <span class="kn">import</span> <span class="n">hooks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">signals</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">PersonHook</span><span class="p">(</span><span class="n">ModelHook</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;person&quot;</span>
+<span class="gp">... </span>    <span class="n">model</span> <span class="o">=</span> <span class="n">Person</span>
+<span class="gp">... </span>    <span class="n">signal</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">post_save</span>
+<span class="gp">... </span>    <span class="n">provides_args</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;address&quot;</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="n">async</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hooks</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">PersonHook</span><span class="p">)</span>
+</pre></div>
+</div>
+</blockquote>
+<p>Now we can create ourselves some listeners. They can be created manually
+or by using the web-interface. A listener must have a URL, which is the
+destination callback the signal is sent to, and you can optionally filter
+events so you only get the events you care about.</p>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># send event when person with name Joe is changed/added.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PersonHook</span><span class="p">()</span><span class="o">.</span><span class="n">listener</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">url</span><span class="o">=</span><span class="s">&quot;http://where.joe/is/listening&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s">&quot;Joe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># send event whenever a person with a name that starts with the</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># letter &quot;J&quot; is changed/added:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">durian.match</span> <span class="kn">import</span> <span class="n">Startswith</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PersonHook</span><span class="p">()</span><span class="o">.</span><span class="n">listener</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">url</span><span class="o">=</span><span class="s">&quot;http://where.joe/is/listening&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="n">Startswith</span><span class="p">(</span><span class="s">&quot;J&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># send event when any Person is changed/added.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PersonHook</span><span class="p">()</span><span class="o">.</span><span class="n">listener</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&quot;http://where.joe/is/listening&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</blockquote>
+<p>The filters can use special matching classes, these are:</p>
+<blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>Any()</dt>
+<dd><p class="first last">Matches anything. Even if the field is not sent at all.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Is(pattern)</dt>
+<dd><p class="first last">Strict equality. The values must match precisely.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Startswith(pattern)</dt>
+<dd><p class="first last">Matches if the string starts with the given pattern.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Endswith(pattern)</dt>
+<dd><p class="first last">Matches if the string ends with the given pattern</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Contains(pattern)</dt>
+<dd><p class="first last">Matches if the string contains the given pattern.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Like(regex)</dt>
+<dd><p class="first last">Match by a regular expression.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</blockquote>
+<p>In this screenshot you can see the view for selecting the person event:</p>
+<img alt="http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png" src="http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png" />
+<p>and then creating a listener for that event:</p>
+<img alt="http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png" src="http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png" />
+</div>
+<div class="section" id="view-for-listening-url">
+<h3>View for listening URL<a class="headerlink" href="#view-for-listening-url" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">anyjson</span> <span class="kn">import</span> <span class="n">deserialize</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">listens</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">payload</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">raw_post_data</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&quot;thanks!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</blockquote>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>You can install <tt class="docutils literal"><span class="pre">durian</span></tt> either via the Python Package Index (PyPI)
+or from source.</p>
+<p>To install using <tt class="docutils literal"><span class="pre">pip</span></tt>,:</p>
+<div class="highlight-python"><pre>$ pip install durian</pre>
+</div>
+<p>To install using <tt class="docutils literal"><span class="pre">easy_install</span></tt>,:</p>
+<div class="highlight-python"><pre>$ easy_install durian</pre>
+</div>
+<p>If you have downloaded a source tarball you can install it
+by doing the following,:</p>
+<div class="highlight-python"><pre>$ python setup.py build
+# python setup.py install # as root</pre>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>BSD License</p>
+</div>
+<div class="section" id="contact">
+<h2>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h2>
+<p>Ask Solem &lt;<a class="reference external" href="mailto:askh&#37;&#52;&#48;opera&#46;com">askh<span>&#64;</span>opera<span>&#46;</span>com</a>&gt;</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">durian - Web Hooks for Django</a><ul>
+<li><a class="reference external" href="#introduction">Introduction</a><ul>
+<li><a class="reference external" href="#creating-an-event">Creating an event</a></li>
+<li><a class="reference external" href="#view-for-listening-url">View for listening URL</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#installation">Installation</a></li>
+<li><a class="reference external" href="#examples">Examples</a></li>
+<li><a class="reference external" href="#license">License</a></li>
+<li><a class="reference external" href="#contact">Contact</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">Durian Documentation</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="reference/index.html"
+                                  title="next chapter">Module API Reference</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="sources/introduction.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference/index.html" title="Module API Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Durian Documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">durian v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Opera Softare (WebTeam).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Matching/Filtering Utilities - durian.match &mdash; durian v0.0.1 documentation</title>
+    <link rel="stylesheet" href="../static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="durian v0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module API Reference" href="index.html" />
+    <link rel="next" title="Matching Conditions - durian.match.able" href="durian.match.able.html" />
+    <link rel="prev" title="Django Models - durian.models" href="durian.models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="durian.match.able.html" title="Matching Conditions - durian.match.able"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="durian.models.html" title="Django Models - durian.models"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">durian v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module API Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-durian.match">
+<h1>Matching/Filtering Utilities - durian.match<a class="headerlink" href="#module-durian.match" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="durian.match.mtuplelist_to_matchdict">
+<tt class="descclassname">durian.match.</tt><tt class="descname">mtuplelist_to_matchdict</tt><big>(</big><em>mtuplelist</em><big>)</big><a class="headerlink" href="#durian.match.mtuplelist_to_matchdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of <tt class="docutils literal"><span class="pre">(name,</span> <span class="pre">kind,</span> <span class="pre">what)</span></tt> tuples to a match dict.
+Where name is the field to match, kind is a matchable number mapping to
+<tt class="docutils literal"><span class="pre">CONST_TO_MATCHABLE</span></tt>.</p>
+<dl class="docutils">
+<dt>Possible types are: <tt class="docutils literal"><span class="pre">CONDITION_EXACT</span></tt>, <tt class="docutils literal"><span class="pre">CONDITION_STARTSWITH</span></tt>,</dt>
+<dd><tt class="docutils literal"><span class="pre">CONDITION_ENDSWITH,</span> <span class="pre">``CONDITION_CONTAINS</span></tt>.</dd>
+</dl>
+<p>Probably best explained by an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mtuplelist</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="n">CONDITION_ENDSWITH</span><span class="p">,</span> <span class="s">&quot;Constanza&quot;</span><span class="p">),</span>
+<span class="gp">... </span>              <span class="p">(</span><span class="s">&quot;zipcode&quot;</span><span class="p">,</span> <span class="n">CONDITION_STARTSWITH</span><span class="p">,</span> <span class="s">&quot;70&quot;</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mtuplelist_to_matchdict</span><span class="p">(</span><span class="n">mtuplelist</span><span class="p">)</span>
+<span class="go">{&quot;name&quot;: Endswith(&quot;Constanza&quot;), &quot;zipcode&quot;: Startswith(&quot;70&quot;)}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="durian.models.html"
+                                  title="previous chapter">Django Models - durian.models</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="durian.match.able.html"
+                                  title="next chapter">Matching Conditions - durian.match.able</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../sources/reference/durian.match.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="durian.match.able.html" title="Matching Conditions - durian.match.able"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="durian.models.html" title="Django Models - durian.models"
+             >previous</a> |</li>
+        <li><a href="../index.html">durian v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Opera Softare (WebTeam).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>
