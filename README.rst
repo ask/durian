@@ -15,11 +15,13 @@ until it has reached an alpha version.
     >>> from django.db import signals
     >>> from django.contrib.auth.models import User
     >>> from durian.hook import ModelHook
+    >>> from durian.registry import hooks
 
     >>> userhook = ModelHook(name="user-post-save",
     ...                      model=User,
     ...                      signal=signals.post_save,
     ...                      provides_args=["username", "is_admin"])
+    >>> hooks.register(userhook)
 
     >>> # send event when Joe is changed
     >>> userhook.listener(
