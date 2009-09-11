@@ -14,4 +14,4 @@ class Listener(models.Model):
     config = PickledObjectField(_("configuration"), default=pickle.dumps({}),
                                 help_text=_("Hook specific configuration."))
     match = PickledObjectField(_(u"conditions"), default=pickle.dumps({}),
-                                help_text=_("Hook specific event filter")),
+                                help_text=_("Hook specific event filter"))

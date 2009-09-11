@@ -6,23 +6,32 @@ from durian.models import Listener
 from celery.registry import tasks
 from durian.tasks import WebhookSignal
 from durian import match
+from django.contrib.auth.models import User
+from django.db.models import signals
 
 
 class TestWebhookSignal(WebhookSignal):
     name = "__durian__.unittest.TestWebhookSignal"
     ignore_result = True
     scratchpad = {}
-    
-    def run(self, url, payload, **kwargs):
-        self.__class__.scratchpad["url"] = payload
 
-    
+    def run(self, url, payload, **kwargs):
+        self.__class__.scratchpad[url] = payload
+
 
 testhook = Hook(name="__durian__.unittest.testhook",
                 provides_args=["name", "address", "phone", "email"],
                 task_cls=TestWebhookSignal,
                 async=False)
 hooks.register(testhook)
+
+testmhook = ModelHook(model=User, signal=signals.post_save,
+                name="__durian__.unittest.testmhook",
+                provides_args=["username", "email", "first_name",
+                               "last_name"],
+                task_cls=TestWebhookSignal,
+                async=False)
+hooks.register(testmhook)
 
 
 class TestHook(unittest.TestCase):
@@ -67,25 +76,66 @@ class TestHook(unittest.TestCase):
             "email": "george@vandelay.com",
         }))
 
+    def test_trigger_event(self):
+        print("FOOOOOBAR")
+        url = "http://where.joe/listens"
+        form = testhook.config_form({"url": url})
+        listener = testhook.listener(form).match(name="Joe").save()
+        self.assertTrue(isinstance(listener, Listener))
 
-        def test_trigger_event(self):
-            url = "http://where.joe/listens"
-            form = testhook.config_form({"url": url})
-            listener = testhook.listener(form).match(name="Joe").save()
+        lis = Listener.objects.filter(url=url)
+        self.assertTrue(lis.count())
+        self.assertTrue(lis[0].url == url)
+
+        testhook.send(sender=self,
+                        name="Joe", address="foo", phone="123",
+                        email="joe@example.com")
+
+        self.assertTrue(TestWebhookSignal.scratchpad.get(url))
+        del(TestWebhookSignal.scratchpad[url])
+
+        testhook.send(sender=self,
+                        name="Simon", address="bar", phone="456",
+                        email="simon@example.com")
+        self.assertFalse(TestWebhookSignal.scratchpad.get(url))
+
+
+class TestModelHook(unittest.TestCase):
+
+    def test_trigger_event(self):
+            url = "http://where.joe/mlistens"
+            form = testmhook.config_form({"url": url})
+            self.assertTrue(testmhook)
+            a = testmhook.listener(form)
+            self.assertTrue(isinstance(a, IntermediateListener))
+            self.assertTrue(callable(a.match))
+            self.assertTrue(testmhook.listener(form).match(username="joe"))
+            listener = testmhook.listener(form).match(username="joe").save()
             self.assertTrue(isinstance(listener, Listener))
 
-            lis = Listener.objects.filter(url="http://where.joe/listens")
+            lis = Listener.objects.filter(url=url)
             self.assertTrue(lis.count())
-            self.assertTrue(lis[0] is listener)
+            self.assertTrue(lis[0].url == url)
 
-            testhook.send(sender=self,
-                          name="Joe", address="foo", phone="123",
-                          email="joe@example.com")
+            u = User.objects.create_user(username="joe",
+                    email="joe@example.com", password="joe")
 
-            self.assertTrue(TestWebhookSignal.scratchpad.get(url))
-            del(TestWebhookSignal.scratchpad["url"])
+            scratch = TestWebhookSignal.scratchpad.get(url)
+            self.assertTrue(scratch)
+            self.assertTrue(scratch["created"])
+            self.assertEquals(scratch["username"], "joe")
+            self.assertEquals(scratch["email"], "joe@example.com")
+            self.assertFalse(scratch.get("password"))
+            del(TestWebhookSignal.scratchpad[url])
 
-            testhook.send(sender=self,
-                          name="Simon", address="bar", phone="456",
-                          email="simon@example.com")
-            self.assertFalse(TestWebHookSignal.scratchpad.get(url))
+            u.last_name = "Example"
+            u.save()
+
+            scratch = TestWebhookSignal.scratchpad.get(url)
+            self.assertTrue(scratch)
+            self.assertEquals(scratch["created"], False)
+            self.assertEquals(scratch["username"], "joe")
+            self.assertEquals(scratch["email"], "joe@example.com")
+            self.assertEquals(scratch["last_name"], "Example")
+            self.assertFalse(scratch.get("password"))
+            del(TestWebhookSignal.scratchpad[url])
