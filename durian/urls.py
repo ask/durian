@@ -3,5 +3,5 @@ from durian import views
 
 
 urlpatterns = patterns("",
-    url(r'^debug/', views.debug, name="debug")
+    url(r'^debug/', views.debug, name="debug"),
 )

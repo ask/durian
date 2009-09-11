@@ -6,7 +6,7 @@ class Matchable(object):
     """Base matchable class.
 
     :param value: See :attr:`value`.
-    
+
     Matchables are used to modify the way a value is tested for equality.
 
     Subclasses of :class:`Matchable` must implement the :meth:`__eq__` method.
@@ -16,7 +16,7 @@ class Matchable(object):
         The value to match against.
 
     """
-    
+
     def __init__(self, value):
         self.value = value
 
@@ -32,7 +32,7 @@ class Matchable(object):
 
 class Is(Matchable):
     """Matchable checking for strict equality.
-    
+
     That is, the values must be identical.
     (same as the regular ``==`` operator.)
 
@@ -44,9 +44,9 @@ class Is(Matchable):
 
 class Startswith(Matchable):
     """Matchable checking if the matched string starts with the matchee.
-   
+
     Same as ``other.startswith(value)``.
-    
+
     """
 
     def __eq__(self, other):
@@ -59,6 +59,7 @@ class Endswith(Matchable):
     Same as ``other.endswith(value)``.
 
     """
+
     def __eq__(self, other):
         return other.endswith(self.value)
 

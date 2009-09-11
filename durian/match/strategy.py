@@ -8,13 +8,13 @@ def deepmatch(needle, haystack):
 
     while True:
         atom_left, atom_right = stream.pop()
-        for k,v in atom_left.items():
-            if isinstance(v, dict):
-                if k not in atom_right:
+        for key, value in atom_left.items():
+            if isinstance(value, dict):
+                if key not in atom_right:
                     return False
-                stream.append((v, atom_right[k]))
+                stream.append((value, atom_right[key]))
             else:
-                if atom_right.get(k) != v:
+                if atom_right.get(key) != value:
                     return False
         if not stream:
             break

@@ -26,7 +26,7 @@ class Hook(object):
         if timeout is not None:
             self.timeout = timeout
         if async is not None:
-            self.async = async 
+            self.async = async
         if retry is not None:
             self.retry = retry
         if max_retries is not None:
@@ -78,7 +78,7 @@ class Hook(object):
     def add_listener(self, url, match={}, **config):
         return Listener.objects.create(hook=self, url=url, match=match,
                                        **dict(config))
-    
+
     def listener(self, form):
         return IntermediateListener(self, form)
 
@@ -142,7 +142,7 @@ class ModelHook(Hook):
     def connect(self):
         self.signal.connect(self.send, sender=self.model,
                             dispatch_uid=self.__class__._dispatch_uid)
-    
+
     def disconnect(self):
         self.signal.disconnect(self.send, sender=self.model,
                                dispatch_uid=self.__class__._dispatch_uid)

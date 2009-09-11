@@ -26,10 +26,11 @@ class BaseMatchForm(forms.Form):
                 self.cleaned_data["%s_query" % field])
 
     def save(self):
-        return self.to_mtuplelist() 
+        return self.to_mtuplelist()
 
 
 def gen_match_form(name, provides_args):
+
     def gen_field_for_name(name):
         return {name: forms.CharField(required=True, initial=name),
                 "%s_cond" % name: forms.ChoiceField(choices=MATCHABLE_CHOICES,
@@ -38,5 +39,5 @@ def gen_match_form(name, provides_args):
                 "%s_query" % name: forms.CharField(required=True, initial="")}
     dict_ = dict(_provides_args=provides_args)
     [dict_.update(gen_field_for_name(name)) for name in provides_args]
-        
+
     return type(name, (BaseMatchForm, ), dict_)
