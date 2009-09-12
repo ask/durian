@@ -62,7 +62,7 @@ setup(
     install_requires=install_requires,
     cmdclass = {"test": RunTests},
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 4 - Beta",
         "Framework :: Django",
         "Environment :: Web Environment",
         "Topic :: Internet :: WWW/HTTP",
