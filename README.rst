@@ -2,7 +2,7 @@
 durian - Web Hooks for Django
 ============================================================================
 
-:Version: 0.0.1
+:Version: 0.1.0
 
 .. image:: http://cloud.github.com/downloads/ask/durian/webhooks-logo.png
 
