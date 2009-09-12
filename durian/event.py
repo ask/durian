@@ -76,6 +76,7 @@ class Hook(object):
     """
 
     name = None
+    verbose_name = None
     task_cls = WebhookSignal
     timeout = 4
     async = True
@@ -86,10 +87,12 @@ class Hook(object):
     provides_args = []
     match_forms = None
 
-    def __init__(self, name=None, task_cls=None, timeout=None,
-            async=None, retry=None, max_retries=None, fail_silently=False,
-            config_form=None, provides_args=None, match_forms=None, **kwargs):
+    def __init__(self, name=None, verbose_name=None, task_cls=None,
+            timeout=None, async=None, retry=None, max_retries=None,
+            fail_silently=False, config_form=None, provides_args=None,
+            match_forms=None, **kwargs):
         self.name = name or self.name or get_full_cls_name(self.__class__)
+        self.verbose_name = verbose_name or self.verbose_name or self.name
         self.task_cls = task_cls or self.task_cls
         if timeout is not None:
             self.timeout = timeout
@@ -103,7 +106,7 @@ class Hook(object):
             self.fail_silently = fail_silently
         self.provides_args = provides_args or self.provides_args
         self.config_form = config_form or self.config_form
-        form_name = "%sConfigForm" % self.name
+        form_name = "%sConfigForm" % self.name.capitalize()
         self.match_forms = match_forms or self.match_forms or \
                             create_match_forms(form_name, self.provides_args)
 

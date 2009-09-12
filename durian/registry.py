@@ -62,7 +62,7 @@ class HookRegistry(UserDict):
         dict_types = dict((type.name, type)
                         for type in self.data.values())
         sorted_names = sorted(dict_types.keys())
-        return [(type.name, name.capitalize())
+        return [(type.name, type.verbose_name.capitalize())
                     for name, type in dict_types.items()]
 
 """
