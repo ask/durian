@@ -78,7 +78,7 @@ the global webhook registry. For now we'll set ``async`` to False, this means
 the tasks won't be sent to ``celeryd`` but executed locally instead. In
 production you would certainly want the dispatch to be asynchronous.
     
-    >>> from durian.hook import ModelHook
+    >>> from durian.event import ModelHook
     >>> from durian.registry import hooks
     >>> from django.db.models import signals
 

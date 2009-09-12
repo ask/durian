@@ -1,5 +1,5 @@
 import unittest
-from durian.hook import Hook, ModelHook, IntermediateListener
+from durian.event import Hook, ModelHook, IntermediateListener
 from durian.registry import hooks
 from durian.forms import BaseMatchForm
 from durian.models import Listener

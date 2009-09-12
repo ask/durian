@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
-from durian.hook import ModelHook
+from durian.event import ModelHook
 from durian.registry import hooks
 
 

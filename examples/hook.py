@@ -1,7 +1,7 @@
 from durian.models import Listener
 from django import forms
 from durian.forms import HookConfigForm
-from durian.hook import Hook
+from durian.event import Hook
 from durian.registry import hooks
 
 
@@ -85,7 +85,7 @@ def add_twitter_hook(request, template_name="myapp/twitterhook.html"):
 
 from django.db import signals
 from django.contrib.auth.models import User
-from durian.hook import ModelHook
+from durian.event import ModelHook
 
 
 userhook = ModelHook(name="user-post-save",

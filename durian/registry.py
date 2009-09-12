@@ -35,7 +35,7 @@ class HookRegistry(UserDict):
         """Unregister hook by name.
 
         :param name: name of the hook to unregister, or a
-            :class:`durian.hook.Hook` class with a valid ``name`` attribute.
+            :class:`durian.event.Hook` class with a valid ``name`` attribute.
 
         :raises celery.exceptions.NotRegistered: if the hook has not
             been registered.
