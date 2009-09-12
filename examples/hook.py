@@ -112,3 +112,48 @@ userhook.listener(
 joe = User.objects.get(username="joe")
 joe.is_admin = True
 joe.save()
+
+
+A hook that sends events to twitter
+-----------------------------------
+
+
+In ``myapp/tasks.py``:
+
+    >>> from celery.task import Task
+    >>> from celery.registry import tasks
+
+    >>> class TwitterUpdateTask(WebhookSignal):
+    ...     name = "myapp.tasks.TwitterWebhookSignal"
+    ... 
+    ...     def run(self, username, password, message, \*\*kwargs):
+    ...         import twitter
+    ...         api = twitter.Api(username=username, password=password)
+    ...         api.PostUpdate(message)
+    >>> tasks.register(TwitterUpdateTask)
+
+
+In ``myapp/hooks.py``:
+
+    >>> from durian.event import Hook
+    >>> from durian.registry import hooks
+    >>> from durian.forms import BaseHookConfigForm
+    >>> from django.utils.translation import _
+    >>> from django import forms
+
+    >>> class TwitterHookConfigForm(HookConfigForm):
+    ...     username = forms.CharField(label=_("twitter username"),
+    ...                                required=True)
+    ...     password = forms.CharField(label=_("twitter password"),
+    ...                                widget=forms.PasswordInput())
+
+
+    >>> class TwitterHook(Hook):
+    ...     name = "Twitter"
+    ...     task_cls = TwitterUpdateTask
+    ...     config_form = TwitterHookConfigForm
+    ...
+    ...     def 
+
+
+
