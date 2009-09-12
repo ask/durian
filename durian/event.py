@@ -84,7 +84,7 @@ class Hook(object):
     max_retries = 3
     fail_silently = False
     config_form = HookConfigForm
-    provides_args = []
+    provides_args = set()
     match_forms = None
 
     def __init__(self, name=None, verbose_name=None, task_cls=None,
@@ -104,7 +104,7 @@ class Hook(object):
             self.max_retries = max_retries
         if fail_silently is not None:
             self.fail_silently = fail_silently
-        self.provides_args = provides_args or self.provides_args
+        self.provides_args = set(provides_args) or self.provides_args
         self.config_form = config_form or self.config_form
         form_name = "%sConfigForm" % self.name.capitalize()
         self.match_forms = match_forms or self.match_forms or \

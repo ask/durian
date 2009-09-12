@@ -8,6 +8,7 @@ from durian.tasks import WebhookSignal
 from durian import match
 from django.contrib.auth.models import User
 from django.db.models import signals
+from django.dispatch import Signal
 
 
 class TestWebhookSignal(WebhookSignal):
