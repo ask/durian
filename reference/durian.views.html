@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Django Views - durian.views &mdash; durian v0.0.2 documentation</title>
+    <title>Django Views - durian.views &mdash; durian v0.1.0 documentation</title>
     <link rel="stylesheet" href="../static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.0.2',
+        VERSION:     '0.1.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../static/jquery.js"></script>
     <script type="text/javascript" src="../static/doctools.js"></script>
-    <link rel="top" title="durian v0.0.2 documentation" href="../index.html" />
+    <link rel="top" title="durian v0.1.0 documentation" href="../index.html" />
     <link rel="up" title="Module API Reference" href="index.html" />
     <link rel="next" title="Django Forms - durian.forms" href="durian.forms.html" />
     <link rel="prev" title="Celery Tasks - durian.tasks" href="durian.tasks.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="durian.tasks.html" title="Celery Tasks - durian.tasks"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">durian v0.0.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">durian v0.1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Module API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,6 +52,32 @@
             
   <div class="section" id="module-durian.views">
 <h1>Django Views - durian.views<a class="headerlink" href="#module-durian.views" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="durian.views.create">
+<tt class="descclassname">durian.views.</tt><tt class="descname">create</tt><big>(</big><em>request</em>, <em>template_name='durian/create_hook.html'</em><big>)</big><a class="headerlink" href="#durian.views.create" title="Permalink to this definition">¶</a></dt>
+<dd>View to create a new hook.</dd></dl>
+
+<dl class="function">
+<dt id="durian.views.debug">
+<tt class="descclassname">durian.views.</tt><tt class="descname">debug</tt><big>(</big><em>request</em><big>)</big><a class="headerlink" href="#durian.views.debug" title="Permalink to this definition">¶</a></dt>
+<dd>Simple listener destination URL to dump out the payload and
+request to stderr.</dd></dl>
+
+<dl class="function">
+<dt id="durian.views.get_hook_or_404">
+<tt class="descclassname">durian.views.</tt><tt class="descname">get_hook_or_404</tt><big>(</big><em>hook_type</em><big>)</big><a class="headerlink" href="#durian.views.get_hook_or_404" title="Permalink to this definition">¶</a></dt>
+<dd>Get hook by type in the registry or raise HTTP 404.</dd></dl>
+
+<dl class="function">
+<dt id="durian.views.select">
+<tt class="descclassname">durian.views.</tt><tt class="descname">select</tt><big>(</big><em>request</em>, <em>template_name='durian/select_hook.html'</em><big>)</big><a class="headerlink" href="#durian.views.select" title="Permalink to this definition">¶</a></dt>
+<dd>Select hook to create.</dd></dl>
+
+<dl class="function">
+<dt id="durian.views.send">
+<tt class="descclassname">durian.views.</tt><tt class="descname">send</tt><big>(</big><em>request</em>, <em>hook_type</em><big>)</big><a class="headerlink" href="#durian.views.send" title="Permalink to this definition">¶</a></dt>
+<dd>Trigger hook by sending payload as POST data.</dd></dl>
+
 </div>
 
 
@@ -103,7 +129,7 @@
         <li class="right" >
           <a href="durian.tasks.html" title="Celery Tasks - durian.tasks"
              >previous</a> |</li>
-        <li><a href="../index.html">durian v0.0.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">durian v0.1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >Module API Reference</a> &raquo;</li> 
       </ul>
     </div>

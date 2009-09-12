@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>durian - Web Hooks for Django &mdash; durian v0.0.2 documentation</title>
+    <title>durian - Web Hooks for Django &mdash; durian v0.1.0 documentation</title>
     <link rel="stylesheet" href="static/nature.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.0.2',
+        VERSION:     '0.1.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="static/jquery.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="durian v0.0.2 documentation" href="index.html" />
+    <link rel="top" title="durian v0.1.0 documentation" href="index.html" />
     <link rel="next" title="Module API Reference" href="reference/index.html" />
     <link rel="prev" title="Durian Documentation" href="index.html" /> 
   </head>
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="index.html" title="Durian Documentation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">durian v0.0.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">durian v0.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,7 +54,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Version:</th><td class="field-body">0.0.1</td>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">0.1.0</td>
 </tr>
 </tbody>
 </table>
@@ -86,8 +86,11 @@ These slides by Jeff Lindsay is a good introduction to the subject:
 change drastically. You can follow what is happening here, and is welcome to
 help out making it happen, but you should probably not use it for anything
 until it has reached an alpha version.</p>
-<div class="section" id="creating-an-event">
-<h3>Creating an event<a class="headerlink" href="#creating-an-event" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="creating-an-event-with-a-model-and-a-signal">
+<h3>Creating an event with a model and a signal<a class="headerlink" href="#creating-an-event-with-a-model-and-a-signal" title="Permalink to this headline">¶</a></h3>
 <p>In this example we&#8217;ll be creating a ModelHook.</p>
 <p>A ModelHook is a hook which takes a Django model and signal.
 So whenever that signal is fired, the hook is also triggered.</p>
@@ -151,7 +154,73 @@ events so you only get the events you care about.</p>
 </pre></div>
 </div>
 </blockquote>
-<p>The filters can use special matching classes, these are:</p>
+<p>The filters can use special matching classes, as you see with the
+<tt class="docutils literal"><span class="pre">Startswith</span></tt> above. See <a class="reference internal" href="#matching-classes">Matching classes</a> for a list of these.</p>
+<p>In this screenshot you can see the view for selecting the person event:</p>
+<img alt="http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png" src="http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png" />
+<p>and then creating a listener for that event:</p>
+<img alt="http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png" src="http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png" />
+</div>
+<div class="section" id="creating-custom-hooks">
+<h3>Creating custom hooks<a class="headerlink" href="#creating-custom-hooks" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes you&#8217;d like to create hooks for something else than a model.
+If there&#8217;s already a Django signal you want to bind to there is the
+<tt class="docutils literal"><span class="pre">SignalHook</span></tt>. Otherwise you can send your own signal by creating a custom
+<tt class="docutils literal"><span class="pre">Hook</span></tt>.</p>
+<p>The only required attribute of a hook is the name, so it can be uniquely
+identified in the hook registry.</p>
+<p>There are two ways of defining a hook, either by instantiation a Hook
+class, or by subclassing one. You can register a hook instance, or a hook
+class, it doesn&#8217;t matter as long as the name is different:</p>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">durian.registry</span> <span class="kn">import</span> <span class="n">hooks</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Defining a hook by instantiating a hook class:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myhook</span> <span class="o">=</span> <span class="n">Hook</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;myhook&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hooks</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">myhook</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Defining a hook by subclassing a hook class:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyHook</span><span class="p">(</span><span class="n">Hook</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;myhook&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hooks</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MyHook</span><span class="p">)</span>
+</pre></div>
+</div>
+</blockquote>
+<p>These also supports the <tt class="docutils literal"><span class="pre">provides_args</span></tt> attribute which can automatically
+generate event filter forms.</p>
+<p>See the API reference for a complete list of <tt class="docutils literal"><span class="pre">Hook</span></tt> arguments and
+attributes.</p>
+<p>Triggering a hook is simple by using the <tt class="docutils literal"><span class="pre">send</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyHook</span><span class="p">(</span><span class="n">Hook</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;myhook&quot;</span>
+<span class="gp">... </span>   <span class="n">provides_args</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;address&quot;</span><span class="p">]</span>
+<span class="gp">... </span>   <span class="n">async</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hooks</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MyHook</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MyHook</span><span class="p">()</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">sender</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">name</span><span class="o">=</span><span class="s">&quot;George Constanza&quot;</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="s">&quot;New York City&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="view-for-listening-url">
+<h3>View for listening URL<a class="headerlink" href="#view-for-listening-url" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">anyjson</span> <span class="kn">import</span> <span class="n">deserialize</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">listens</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">payload</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">raw_post_data</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&quot;thanks!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</blockquote>
+</div>
+<div class="section" id="matching-classes">
+<h3>Matching classes<a class="headerlink" href="#matching-classes" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <ul>
 <li><dl class="first docutils">
@@ -192,25 +261,6 @@ events so you only get the events you care about.</p>
 </li>
 </ul>
 </blockquote>
-<p>In this screenshot you can see the view for selecting the person event:</p>
-<img alt="http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png" src="http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png" />
-<p>and then creating a listener for that event:</p>
-<img alt="http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png" src="http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png" />
-</div>
-<div class="section" id="view-for-listening-url">
-<h3>View for listening URL<a class="headerlink" href="#view-for-listening-url" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">anyjson</span> <span class="kn">import</span> <span class="n">deserialize</span>
-</pre></div>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">listens</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">payload</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">raw_post_data</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">])</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&quot;thanks!&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</blockquote>
 </div>
 </div>
 <div class="section" id="installation">
@@ -229,8 +279,8 @@ by doing the following,:</p>
 # python setup.py install # as root</pre>
 </div>
 </div>
-<div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h2>Examples<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
@@ -251,13 +301,16 @@ by doing the following,:</p>
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">durian - Web Hooks for Django</a><ul>
-<li><a class="reference external" href="#introduction">Introduction</a><ul>
-<li><a class="reference external" href="#creating-an-event">Creating an event</a></li>
+<li><a class="reference external" href="#introduction">Introduction</a></li>
+<li><a class="reference external" href="#examples">Examples</a><ul>
+<li><a class="reference external" href="#creating-an-event-with-a-model-and-a-signal">Creating an event with a model and a signal</a></li>
+<li><a class="reference external" href="#creating-custom-hooks">Creating custom hooks</a></li>
 <li><a class="reference external" href="#view-for-listening-url">View for listening URL</a></li>
+<li><a class="reference external" href="#matching-classes">Matching classes</a></li>
 </ul>
 </li>
 <li><a class="reference external" href="#installation">Installation</a></li>
-<li><a class="reference external" href="#examples">Examples</a></li>
+<li><a class="reference external" href="#id1">Examples</a></li>
 <li><a class="reference external" href="#license">License</a></li>
 <li><a class="reference external" href="#contact">Contact</a></li>
 </ul>
@@ -307,7 +360,7 @@ by doing the following,:</p>
         <li class="right" >
           <a href="index.html" title="Durian Documentation"
              >previous</a> |</li>
-        <li><a href="index.html">durian v0.0.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">durian v0.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

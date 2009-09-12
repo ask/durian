@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Django Forms - durian.forms &mdash; durian v0.0.2 documentation</title>
+    <title>Django Forms - durian.forms &mdash; durian v0.1.0 documentation</title>
     <link rel="stylesheet" href="../static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.0.2',
+        VERSION:     '0.1.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../static/jquery.js"></script>
     <script type="text/javascript" src="../static/doctools.js"></script>
-    <link rel="top" title="durian v0.0.2 documentation" href="../index.html" />
+    <link rel="top" title="durian v0.1.0 documentation" href="../index.html" />
     <link rel="up" title="Module API Reference" href="index.html" />
     <link rel="next" title="Django Models - durian.models" href="durian.models.html" />
     <link rel="prev" title="Django Views - durian.views" href="durian.views.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="durian.views.html" title="Django Views - durian.views"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">durian v0.0.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">durian v0.1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Module API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,6 +52,44 @@
             
   <div class="section" id="module-durian.forms">
 <h1>Django Forms - durian.forms<a class="headerlink" href="#module-durian.forms" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="durian.forms.BaseMatchForm">
+<em class="property">class </em><tt class="descclassname">durian.forms.</tt><tt class="descname">BaseMatchForm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#durian.forms.BaseMatchForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for match forms.</p>
+<p>Supports converting the form to a match tuple.</p>
+<dl class="method">
+<dt id="durian.forms.BaseMatchForm.field_to_mtuple">
+<tt class="descname">field_to_mtuple</tt><big>(</big><big>)</big><a class="headerlink" href="#durian.forms.BaseMatchForm.field_to_mtuple" title="Permalink to this definition">¶</a></dt>
+<dd>Convert the form to a match tuple.</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="durian.forms.HookConfigForm">
+<em class="property">class </em><tt class="descclassname">durian.forms.</tt><tt class="descname">HookConfigForm</tt><big>(</big><em>data=None</em>, <em>files=None</em>, <em>auto_id='id_%s'</em>, <em>prefix=None</em>, <em>initial=None</em>, <em>error_class=&lt;class 'django.forms.util.ErrorList'&gt;</em>, <em>label_suffix=':'</em>, <em>empty_permitted=False</em><big>)</big><a class="headerlink" href="#durian.forms.HookConfigForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Form for the default hook config.</p>
+<p>By default listeners only needs an URL, if you want custom configuration
+keys you can subclass this form and use that as the hooks
+<a title="durian.event.Hook.config_form" class="reference external" href="durian.event.html#durian.event.Hook.config_form"><tt class="xref docutils literal"><span class="pre">durian.event.Hook.config_form</span></tt></a> attribute.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="durian.forms.create_match_forms">
+<tt class="descclassname">durian.forms.</tt><tt class="descname">create_match_forms</tt><big>(</big><em>name</em>, <em>provides_args</em><big>)</big><a class="headerlink" href="#durian.forms.create_match_forms" title="Permalink to this definition">¶</a></dt>
+<dd><p>With a list of supported arguments, generate a list of match
+forms for these.</p>
+<p>E.g. if the supported arguments is <tt class="docutils literal"><span class="pre">[&quot;name&quot;,</span> <span class="pre">&quot;address&quot;]</span></tt>, it will
+generate forms like these:</p>
+<div class="highlight-python"><pre>Name: SELECT:[any|exact|starts with|ends with|contains] [ query ]
+Address: SELECT:[any|exact|starts with|ends with|contains] [ query ]</pre>
+</div>
+<p>When these form are feeded with data they can be converted to a match
+dict like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="n">Startswith</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">),</span> <span class="s">&quot;address&quot;</span><span class="p">:</span> <span class="n">Endswith</span><span class="p">(</span><span class="s">&quot;New York&quot;</span><span class="p">)}</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="function">
 <dt id="durian.forms.create_select_hook_form">
 <tt class="descclassname">durian.forms.</tt><tt class="descname">create_select_hook_form</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#durian.forms.create_select_hook_form" title="Permalink to this definition">¶</a></dt>
@@ -109,7 +147,7 @@ hook types registered in the hook registry.</dd></dl>
         <li class="right" >
           <a href="durian.views.html" title="Django Views - durian.views"
              >previous</a> |</li>
-        <li><a href="../index.html">durian v0.0.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">durian v0.1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >Module API Reference</a> &raquo;</li> 
       </ul>
     </div>

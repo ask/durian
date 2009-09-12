@@ -2,7 +2,7 @@
 durian - Web Hooks for Django
 ============================================================================
 
-:Version: 0.0.1
+:Version: 0.1.0
 
 .. image:: http://cloud.github.com/downloads/ask/durian/webhooks-logo.png
 
@@ -49,8 +49,11 @@ help out making it happen, but you should probably not use it for anything
 until it has reached an alpha version.
 
 
-Creating an event
------------------
+Examples
+========
+
+Creating an event with a model and a signal
+-------------------------------------------
 
 In this example we'll be creating a ModelHook.
 
@@ -111,7 +114,80 @@ events so you only get the events you care about.
     >>> # send event when any Person is changed/added.
     >>> PersonHook().listener(url="http://where.joe/is/listening").save()
 
-The filters can use special matching classes, these are:
+The filters can use special matching classes, as you see with the
+``Startswith`` above. See `Matching classes`_ for a list of these.
+
+In this screenshot you can see the view for selecting the person event:
+
+.. image:: 
+    http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png
+
+and then creating a listener for that event:
+
+.. image::
+    http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png
+
+
+Creating custom hooks
+---------------------
+
+Sometimes you'd like to create hooks for something else than a model.
+If there's already a Django signal you want to bind to there is the
+``SignalHook``. Otherwise you can send your own signal by creating a custom
+``Hook``.
+    
+The only required attribute of a hook is the name, so it can be uniquely
+identified in the hook registry.
+
+There are two ways of defining a hook, either by instantiation a Hook
+class, or by subclassing one. You can register a hook instance, or a hook
+class, it doesn't matter as long as the name is different:
+
+    >>> from durian.registry import hooks
+
+    >>> # Defining a hook by instantiating a hook class:
+    >>> myhook = Hook(name="myhook")
+    >>> hooks.register(myhook)
+
+    >>> # Defining a hook by subclassing a hook class:
+    >>> class MyHook(Hook):
+    ...     name = "myhook"
+    >>> hooks.register(MyHook)
+
+
+These also supports the ``provides_args`` attribute which can automatically
+generate event filter forms.
+
+See the API reference for a complete list of ``Hook`` arguments and
+attributes.
+
+Triggering a hook is simple by using the ``send`` method::
+
+    >>> class MyHook(Hook):
+    ...    name = "myhook"
+    ...    provides_args = ["name", "address"]
+    ...    async = False
+    >>> hooks.register(MyHook)
+
+    >>> MyHook().send(sender=None,
+    ...               name="George Constanza", address="New York City")
+
+
+View for listening URL
+----------------------
+
+    >>> from django.http import HttpResponse
+    >>> from anyjson import deserialize
+
+    >>> def listens(request):
+    ...     payload = deserialize(request.raw_post_data)
+    ...     print(payload["name"])
+    ...     return HttpResponse("thanks!")
+
+
+Matching classes
+----------------
+
 
     * Any()
         Matches anything. Even if the field is not sent at all.   
@@ -131,28 +207,6 @@ The filters can use special matching classes, these are:
     * Like(regex)
         Match by a regular expression.
 
-
-In this screenshot you can see the view for selecting the person event:
-
-.. image:: 
-    http://cloud.github.com/downloads/ask/durian/durian-shot-select_event.png
-
-and then creating a listener for that event:
-
-.. image::
-    http://cloud.github.com/downloads/ask/durian/durian-shot-create_listenerv2.png
-
-
-View for listening URL
-----------------------
-
-    >>> from django.http import HttpResponse
-    >>> from anyjson import deserialize
-
-    >>> def listens(request):
-    ...     payload = deserialize(request.raw_post_data)
-    ...     print(payload["name"])
-    ...     return HttpResponse("thanks!")
 
 
 Installation

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Celery Tasks - durian.tasks &mdash; durian v0.0.2 documentation</title>
+    <title>Celery Tasks - durian.tasks &mdash; durian v0.1.0 documentation</title>
     <link rel="stylesheet" href="../static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.0.2',
+        VERSION:     '0.1.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../static/jquery.js"></script>
     <script type="text/javascript" src="../static/doctools.js"></script>
-    <link rel="top" title="durian v0.0.2 documentation" href="../index.html" />
+    <link rel="top" title="durian v0.1.0 documentation" href="../index.html" />
     <link rel="up" title="Module API Reference" href="index.html" />
     <link rel="next" title="Django Views - durian.views" href="durian.views.html" />
     <link rel="prev" title="Defining Hooks - durian.event" href="durian.event.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="durian.event.html" title="Defining Hooks - durian.event"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">durian v0.0.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">durian v0.1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Module API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,6 +52,30 @@
             
   <div class="section" id="module-durian.tasks">
 <h1>Celery Tasks - durian.tasks<a class="headerlink" href="#module-durian.tasks" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="durian.tasks.WebhookSignal">
+<em class="property">class </em><tt class="descclassname">durian.tasks.</tt><tt class="descname">WebhookSignal</tt><a class="headerlink" href="#durian.tasks.WebhookSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default web hook action. Simply sends the payload to the
+listener URL as POST data.</p>
+<p>Task arguments</p>
+<blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>url</dt>
+<dd><p class="first last">The listener destination URL to send payload to.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>payload</dt>
+<dd><p class="first last">The payload to send to the listener.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</blockquote>
+</dd></dl>
+
 </div>
 
 
@@ -103,7 +127,7 @@
         <li class="right" >
           <a href="durian.event.html" title="Defining Hooks - durian.event"
              >previous</a> |</li>
-        <li><a href="../index.html">durian v0.0.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">durian v0.1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >Module API Reference</a> &raquo;</li> 
       </ul>
     </div>
