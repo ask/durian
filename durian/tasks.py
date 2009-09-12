@@ -5,6 +5,18 @@ from anyjson import serialize
 
 
 class WebhookSignal(Task):
+    """The default web hook action. Simply sends the payload to the
+    listener URL as POST data.
+
+    Task arguments
+
+        * url
+            The listener destination URL to send payload to.
+
+        * payload
+            The payload to send to the listener.
+
+    """
     name = "durian.tasks.WebhookSignal"
     ignore_result = True
 
