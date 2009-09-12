@@ -17,12 +17,13 @@ MATCHABLE_CHOICES = (
 )
 
 CONST_TO_MATCHABLE = {
-	CONDITION_PASS: Any,
+    CONDITION_PASS: Any,
     CONDITION_EXACT: Is,
     CONDITION_STARTSWITH: Startswith,
     CONDITION_ENDSWITH: Endswith,
     CONDITION_CONTAINS: Contains,
 }
+
 
 def const_to_matchable(const_kind, what):
     return CONST_TO_MATCHABLE[int(const_kind)](what)

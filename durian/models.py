@@ -19,7 +19,7 @@ class Listener(models.Model):
     class Meta:
         verbose_name = _("listener")
         verbose_name_plural = _("listeners")
-    
+
     def __unicode__(self):
         return "%s match:%s config:%s" % (
                 self.url, self.match, self.config)

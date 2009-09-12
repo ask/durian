@@ -15,7 +15,7 @@ def send(request, hook_type):
     if request.method != "POST":
         return HttpResponseNotAllowed(_("Method not allowed: %s") % (
             request.method))
-        
+
     payload = dict(request.POST.copy())
     sender = request.META
 

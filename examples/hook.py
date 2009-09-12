@@ -5,13 +5,11 @@ from durian.event import Hook
 from durian.registry import hooks
 
 
-            
 # SIMPLE HOOK 
 
 class MyHook(Hook):
     name = "myhook"
 hooks.register(MyHook())
-
 
 
 def install_listener():
@@ -21,9 +19,9 @@ def install_listener():
 
 # HOOK SENT EVERY TIME USER "ask" COMMITS A CHANGE
 
-
 # This form is needed to add a listener, so the correct username/password
 # is sent when sending updates to twitter.
+
 class TwitterCommitHookConfigForm(HookConfigForm):
     username = forms.CharField(label=_(u"username"))
     password = forms.CharField(label=_(u"password"), required=True, 
@@ -38,7 +36,6 @@ class TwitterCommitHook(Hook):
     config_form = TwitterCommitHookConfigForm
     providing_args = ["username", "password", "digest", "active"]
 hooks.register(TwitterCommitHook)
-
 
 
 # This is the function triggering the hook

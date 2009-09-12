@@ -72,6 +72,7 @@ def create_match_forms(name, provides_args):
         >>> {"name": Startswith("foo"), "address": Endswith("New York")}
 
     """
+
     def gen_field_for_name(name):
         return {"%s_cond" % name: forms.ChoiceField(label=name,
                                               choices=MATCHABLE_CHOICES,
